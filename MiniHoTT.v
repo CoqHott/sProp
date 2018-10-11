@@ -19,16 +19,6 @@ Definition paths_ind_beta : forall A a P u, paths _ (paths_ind A a P u a (idpath
   reflexivity.
 Defined.
 
-(* Definition sigT : forall A, (A -> Type) -> Type := @sigT. *)
-(* Definition existT : forall A P x, P x -> sigT A P := @existT. *)
-(* Definition sigT_ind : forall A P (Q : sigT A P -> Type), *)
-(*     (forall x p, Q (existT A P x p)) -> forall s, Q s := sigT_rect. *)
-
-
-
-
-(* *********************************************** *)
-
 Arguments sigT {A}%type P%type.
 Arguments existT {A}%type P%type _ _.
 Arguments projT1 {A P} _ / .
@@ -3118,22 +3108,6 @@ Proof.
 Defined.
 
 
-(** Applying a two variable function to a [path_sigma]. *)
-
-(* Definition ap_path_sigma {A B} (P : A -> Type) (F : forall a : A, P a -> B) *)
-(*            {x x' : A} {y : P x} {y' : P x'} (p : x = x') (q : p # y = y') *)
-(*   : ap (fun w => F w.1 w.2) (path_sigma' P p q) *)
-(*     = ap _ (moveL_transport_V _ p _ _ q) *)
-(*          @ (transport_arrow_toconst _ _ _)^ @ ap10 (apD F p) y'. *)
-(* Proof. *)
-(*   destruct p, q; reflexivity. *)
-(* Defined. *)
-(* Remark: this is also equal to: *)
-(*     = ap10 (apD F p^)^ y @ transport_arrow_toconst _ _ _ *)
-(*                          @ ap (F x') (transport2 _ (inv_V p) y @ q). *)
-
-
-
 (** And we can simplify when the first equality is [1]. *)
 Lemma ap_path_sigma_1p {A B : Type} {P : A -> Type} (F : forall a, P a -> B)
       (a : A) {x y : P a} (p : x = y)
@@ -3142,22 +3116,6 @@ Proof.
   destruct p; reflexivity.
 Defined.
 
-
-(** Applying a function constructed with [sigT_ind] to a [path_sigma] can be computed.  Technically this computation should probably go by way of a 2-variable [ap], and should be done in the dependently typed case. *)
-
-(* Definition ap_sigT_rec_path_sigma {A : Type} (P : A -> Type) {Q : Type} *)
-(*            (x1 x2:A) (p:x1=x2) (y1:P x1) (y2:P x2) (q:p # y1 = y2) *)
-(*            (d : forall a, P a -> Q) *)
-(* : ap (sigT_ind (fun _ => Q) d) (path_sigma' P p q) *)
-(*   = (transport_const p _)^ *)
-(*     @ (ap ((transport (fun _ => Q) p) o (d x1)) (transport_Vp _ p y1))^ *)
-
-(*     @ (transport_arrow p _ _)^ *)
-(*     @ ap10 (apD d p) (p # y1) *)
-(*       @ ap (d x2) q. *)
-(* Proof. *)
-(*   destruct p. destruct q. reflexivity. *)
-(* Defined. *)
 
 
 (** A path between paths in a total space is commonly shown component wise. *)
@@ -3326,182 +3284,3 @@ Definition equiv_sigma_assoc `(P : A -> Type) (Q : {a : A & P a} -> Type)
           (fun _ => 1)
           (fun _ => 1)
           (fun _ => 1)).
-
-(* Definition equiv_sigma_prod `(Q : (A * B) -> Type) *)
-(* : {a : A & {b : B & Q (a,b)}} <~> sigT Q *)
-(*   := @BuildEquiv *)
-(*        _ _ _ *)
-(*        (@BuildIsEquiv *)
-(*           {a : A & {b : B & Q (a,b)}} (sigT Q) *)
-(*           (fun apq => ((apq.1, apq.2.1); apq.2.2)) *)
-(*           (fun apq => (fst apq.1; (snd apq.1; apq.2))) *)
-(*           (fun _ => 1) *)
-(*           (fun _ => 1) *)
-(*           (fun _ => 1)). *)
-
-(* Definition equiv_sigma_prod0 A B *)
-(* : {a : A & B} <~> A * B *)
-(*   := BuildEquiv _ _ _ *)
-(*        (BuildIsEquiv *)
-(*           {a : A & B} (A * B) *)
-(*           (fun (ab : {a:A & B}) => (ab.1 , ab.2)) *)
-(*           (fun (ab : A*B) => (fst ab ; snd ab)) *)
-(*           (fun _ => 1) (fun _ => 1) (fun _ => 1)). *)
-
-(* (** ** Symmetry *) *)
-
-(* Definition equiv_sigma_symm `(P : A -> B -> Type) *)
-(* : {a : A & {b : B & P a b}} <~> {b : B & {a : A & P a b}} *)
-(*   := ((equiv_sigma_prod (fun x => P (snd x) (fst x)))^-1) *)
-(*        oE (equiv_functor_sigma' (equiv_prod_symm A B) *)
-(*                                 (fun x => equiv_idmap (P (fst x) (snd x)))) *)
-(*        oE (equiv_sigma_prod (fun x => P (fst x) (snd x))). *)
-
-(* Definition equiv_sigma_symm0 (A B : Type) *)
-(* : {a : A & B} <~> {b : B & A}. *)
-(* Proof. *)
-(*   refine (BuildEquiv _ _ (fun (w:{a:A & B}) => (w.2 ; w.1)) _). *)
-(*   simple refine (BuildIsEquiv _ _ _ (fun (z:{b:B & A}) => (z.2 ; z.1)) *)
-(*                        _ _ _); intros [x y]; reflexivity. *)
-(* Defined. *)
-
-(* (** ** Universal mapping properties *) *)
-
-(* (** *** The positive universal property. *) *)
-(* Global Instance isequiv_sigT_ind `{P : A -> Type} *)
-(*          (Q : sigT P -> Type) *)
-(* : IsEquiv (sigT_ind Q) | 0 *)
-(*   := BuildIsEquiv *)
-(*        _ _ *)
-(*        (sigT_ind Q) *)
-(*        (fun f x y => f (x;y)) *)
-(*        (fun _ => 1) *)
-(*        (fun _ => 1) *)
-(*        (fun _ => 1). *)
-
-(* Definition equiv_sigT_ind `{P : A -> Type} *)
-(*            (Q : sigT P -> Type) *)
-(* : (forall (x:A) (y:P x), Q (x;y)) <~> (forall xy, Q xy) *)
-(*   := BuildEquiv _ _ (sigT_ind Q) _. *)
-
-(* (** *** The negative universal property. *) *)
-
-(* Definition sigT_coind_uncurried *)
-(*            `{A : X -> Type} (P : forall x, A x -> Type) *)
-(* : { f : forall x, A x & forall x, P x (f x) } *)
-(*   -> (forall x, sigT (P x)) *)
-(*   := fun fg => fun x => (fg.1 x ; fg.2 x). *)
-
-(* Definition sigT_coind *)
-(*            `{A : X -> Type} (P : forall x, A x -> Type) *)
-(*            (f : forall x, A x) (g : forall x, P x (f x)) *)
-(* : (forall x, sigT (P x)) *)
-(*   := sigT_coind_uncurried P (f;g). *)
-
-(* Global Instance isequiv_sigT_coind *)
-(*          `{A : X -> Type} {P : forall x, A x -> Type} *)
-(* : IsEquiv (sigT_coind_uncurried P) | 0 *)
-(*   := BuildIsEquiv *)
-(*        _ _ *)
-(*        (sigT_coind_uncurried P) *)
-(*        (fun h => existT (fun f => forall x, P x (f x)) *)
-(*                         (fun x => (h x).1) *)
-(*                         (fun x => (h x).2)) *)
-(*        (fun _ => 1) *)
-(*        (fun _ => 1) *)
-(*        (fun _ => 1). *)
-
-(* Definition equiv_sigT_coind *)
-(*            `(A : X -> Type) (P : forall x, A x -> Type) *)
-(* : { f : forall x, A x & forall x, P x (f x) } *)
-(*     <~> (forall x, sigT (P x)) *)
-(*   := BuildEquiv _ _ (sigT_coind_uncurried P) _. *)
-
-(* (** ** Sigmas preserve truncation *) *)
-
-(* Global Instance trunc_sigma `{P : A -> Type} *)
-(*          `{IsTrunc n A} `{forall a, IsTrunc n (P a)} *)
-(* : IsTrunc n (sigT P) | 100. *)
-(* Proof. *)
-(*   generalize dependent A. *)
-(*   induction n; simpl; intros A P ac Pc. *)
-(*   { exists (center A; center (P (center A))). *)
-(*     intros [a ?]. *)
-(*     refine (path_sigma' P (contr a) (path_contr _ _)). } *)
-(*   { intros u v. *)
-(*     refine (trunc_equiv _ (path_sigma_uncurried P u v)). } *)
-(* Defined. *)
-
-(* (** The sigma of an arbitrary family of *disjoint* hprops is an hprop. *) *)
-(* Definition ishprop_sigma_disjoint *)
-(*            `{P : A -> Type} `{forall a, IsHProp (P a)} *)
-(* : (forall x y, P x -> P y -> x = y) -> IsHProp { x : A & P x }. *)
-(* Proof. *)
-(*   intros dj; apply hprop_allpath; intros [x px] [y py]. *)
-(*   refine (path_sigma' P (dj x y px py) _). *)
-(*   apply path_ishprop. *)
-(* Defined. *)
-
-(* (** ** Subtypes (sigma types whose second components are hprops) *) *)
-
-(* (** To prove equality in a subtype, we only need equality of the first component. *) *)
-(* Definition path_sigma_hprop {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} *)
-(*            (u v : sigT P) *)
-(* : u.1 = v.1 -> u = v *)
-(*   := path_sigma_uncurried P u v o pr1^-1. *)
-
-(* Global Instance isequiv_path_sigma_hprop {A P} `{forall x : A, IsHProp (P x)} {u v : sigT P} *)
-(* : IsEquiv (@path_sigma_hprop A P _ u v) | 100 *)
-(*   := isequiv_compose. *)
-
-(* Hint Immediate isequiv_path_sigma_hprop : typeclass_instances. *)
-
-(* Definition equiv_path_sigma_hprop {A : Type} {P : A -> Type} *)
-(*            {HP : forall a, IsHProp (P a)} (u v : sigT P) *)
-(* : (u.1 = v.1) <~> (u = v) *)
-(*   := BuildEquiv _ _ (path_sigma_hprop _ _) _. *)
-
-(* Definition isequiv_pr1_path_hprop {A} {P : A -> Type} *)
-(*          `{forall a, IsHProp (P a)} *)
-(*          x y *)
-(* : IsEquiv (@pr1_path A P x y) *)
-(*   := _ : IsEquiv (path_sigma_hprop x y)^-1. *)
-
-(* Hint Immediate isequiv_pr1_path_hprop : typeclass_instances. *)
-
-(* (** We define this for ease of [SearchAbout IsEquiv ap pr1] *) *)
-(* Definition isequiv_ap_pr1_hprop {A} {P : A -> Type} *)
-(*            `{forall a, IsHProp (P a)} *)
-(*            x y *)
-(* : IsEquiv (@ap _ _ (@pr1 A P) x y) *)
-(*   := _. *)
-
-(* Definition path_sigma_hprop_1 {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} (u : sigT P) *)
-(* : path_sigma_hprop u u 1 = 1. *)
-(* Proof. *)
-(*   unfold path_sigma_hprop. *)
-(*   unfold isequiv_pr1_contr; simpl. *)
-(*   (** Ugh *) *)
-(*   refine (ap (fun p => match p in (_ = v2) return (u = (u.1; v2)) with 1 => 1 end) *)
-(*              (contr (idpath u.2))). *)
-(* Defined. *)
-
-(* (** The inverse of [path_sigma_hprop] has its own name, so we give special names to the section and retraction homotopies to help [rewrite] out. *) *)
-(* Definition path_sigma_hprop_ap_pr1 {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} (u v : sigT P) (p : u = v) *)
-(* : path_sigma_hprop u v (ap pr1 p) = p *)
-(*   := eisretr (path_sigma_hprop u v) p. *)
-(* Definition path_sigma_hprop_pr1_path {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} (u v : sigT P) (p : u = v) *)
-(* : path_sigma_hprop u v p..1 = p *)
-(*   := eisretr (path_sigma_hprop u v) p. *)
-(* Definition ap_pr1_path_sigma_hprop {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} (u v : sigT P) (p : u.1 = v.1) *)
-(* : ap pr1 (path_sigma_hprop u v p) = p *)
-(*   := eissect (path_sigma_hprop u v) p. *)
-(* Definition pr1_path_path_sigma_hprop {A : Type} {P : A -> Type} *)
-(*            `{forall x, IsHProp (P x)} (u v : sigT P) (p : u.1 = v.1) *)
-(* : (path_sigma_hprop u v p)..1 = p *)
-(*   := eissect (path_sigma_hprop u v) p. *)

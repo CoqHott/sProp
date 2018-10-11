@@ -1,5 +1,7 @@
 (* -*- coq-prog-args : ("-allow-sprop")-*-  *)
 
+(* This files requires some basic HoTT reasoning for equality *)
+
 Require Import MiniHoTT.
 
 

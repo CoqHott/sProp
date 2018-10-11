@@ -1,0 +1,4 @@
+-arg "-w '-notation-overridden' '-allow-sprop'" -R . MiniHoTT
+MiniHoTT.v
+Prime.v
+SetoidCWF.v

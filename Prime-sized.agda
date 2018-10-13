@@ -1,5 +1,4 @@
-{-# OPTIONS --postfix-projections --experimental-irrelevance --without-K #-}
---{-# OPTIONS --show-implicit --show-irrelevant #-}
+{-# OPTIONS --prop --postfix-projections --experimental-irrelevance --without-K #-}
 
 open import Agda.Primitive
 open import Agda.Builtin.Size

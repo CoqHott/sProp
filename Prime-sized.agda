@@ -382,18 +382,3 @@ RelPrime? a b = case (gcd a b == 1) of λ where
   where
     from-⊥-in-set : Prelude.Empty.⊥ → ⊥
     from-⊥-in-set ()
-
-private
-  prime-aux : ∀ p b → Dec (∀ n → b ≤ n → n < p → RelPrime n p)
-  prime-aux p b = {!!}
-
-Prime? : (p : Nat) → Dec (Prime p)
-Prime? p with 2 ≤? p | prime-aux p 1
-... | no  2≰p | _            = no (λ p-prime → 2≰p (p-prime .over-one))
-... | _       | no q         = no (λ p-prime → q (p-prime .is-prime))
-... | yes 2≤p | yes is-prime = yes λ where
-    .over-one → ?
-    .is-prime → ?
-
-
--- -}

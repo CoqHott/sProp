@@ -1,15 +1,6 @@
 {-# OPTIONS --prop --postfix-projections --experimental-irrelevance --without-K #-}
 
-open import Agda.Primitive
-open import Agda.Builtin.Size
-open import Agda.Builtin.FromNat
-import Agda.Builtin.Nat
-
-import Prelude.Decidable
-import Prelude.Empty
-
-open import Prelude.Equality
-open import Prelude.Function
+open import Basics
 
 record Lift {ℓ} (P : Prop ℓ) : Set ℓ where
   constructor lift
@@ -64,9 +55,9 @@ instance
       .Number.Constraint _ → Lift ⊤
       .Number.fromNat    n → convert n
     where
-      convert : Agda.Builtin.Nat.Nat → Nat
-      convert Agda.Builtin.Nat.zero = zero
-      convert (Agda.Builtin.Nat.suc x) = suc {∞} (convert x)
+      convert : Builtin.Nat → Nat
+      convert Builtin.zero = zero
+      convert (Builtin.suc x) = suc {∞} (convert x)
 
 _+_ : Nat → Nat → Nat
 zero  + n = n
@@ -176,13 +167,13 @@ pred : ∀ .{i} → Nat {i} → Nat {i}
 pred zero    = zero
 pred (suc x) = x
 
-decEq : (x y : Nat) → Prelude.Decidable.Dec (x ≡ y)
-decEq zero zero = Prelude.Decidable.yes refl
-decEq zero (suc y) = Prelude.Decidable.no λ ()
-decEq (suc x) zero = Prelude.Decidable.no λ ()
+decEq : (x y : Nat) → DecSet (x ≡ y)
+decEq zero zero = yes refl
+decEq zero (suc y) = no λ ()
+decEq (suc x) zero = no λ ()
 decEq (suc x) (suc y) = case (decEq x y) of λ where
-  (Prelude.Decidable.yes x≡y) → Prelude.Decidable.yes (cong suc x≡y)
-  (Prelude.Decidable.no  x≢y) → Prelude.Decidable.no λ sx≡sy → x≢y (cong pred sx≡sy)
+  (yes x≡y) → yes (cong suc x≡y)
+  (no  x≢y) → no λ sx≡sy → x≢y (cong pred sx≡sy)
 
 instance
   _ : Eq Nat
@@ -377,8 +368,8 @@ gcd-unique {i₁} {i₂} (suc {j₁} a) (suc {j₂} b) {g} p with a ≤? b
 
 RelPrime? : (a b : Nat) → Dec (RelPrime a b)
 RelPrime? a b = case (gcd a b == 1) of λ where
-    (Prelude.Decidable.yes gcd≡1) → yes (rew→ (GCD a b) gcd≡1 (gcd-correct a b))
-    (Prelude.Decidable.no  gcd≢1) → no (λ gcd1 → from-⊥-in-set (gcd≢1 (sym (gcd-unique a b {1} gcd1))))
+    (yes gcd≡1) → yes (rew→ (GCD a b) gcd≡1 (gcd-correct a b))
+    (no  gcd≢1) → no (λ gcd1 → from-⊥-in-set (gcd≢1 (sym (gcd-unique a b {1} gcd1))))
   where
-    from-⊥-in-set : Prelude.Empty.⊥ → ⊥
+    from-⊥-in-set : Empty → ⊥
     from-⊥-in-set ()

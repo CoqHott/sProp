@@ -1,12 +1,8 @@
 {-# OPTIONS --prop --postfix-projections #-}
 
-open import Prelude using
-  ( Nat ; zero ; suc ; _+_ ; _-_ ; _*_
-  ; Level ; _⊔_
-  )
-open import Prelude.Equality
-
-variable {ℓ} : Level
+open import Basics
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_; _-_; _*_)
+open import Agda.Builtin.Equality
 
 record ΣP {ℓ} {ℓ′} (A : Prop ℓ) (B : A → Prop ℓ′) : Prop (ℓ ⊔ ℓ′) where
   constructor _,_

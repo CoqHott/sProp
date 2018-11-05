@@ -21,6 +21,17 @@ To compile the coq development:
    coqc (with sProp) is (`export COQBIN=/.../bin/`).
 * Then run `make`.
 
+## Equations
+
+To get the branch of Equations working with sProp, clone
+http://github.com/mattam82/Coq-Equations , checkout branch
+`invert_sprop` and run:
+
+# coq_makefile -f _CoqProject -o Makefile
+# make
+# make install
+
+This allows to proces the `Prime.v` example.
 
 ## Agda
 

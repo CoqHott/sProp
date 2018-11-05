@@ -27,9 +27,9 @@ To get the branch of Equations working with sProp, clone
 http://github.com/mattam82/Coq-Equations , checkout branch
 `invert_sprop` and run:
 
-  # coq_makefile -f _CoqProject -o Makefile
-  # make
-  # make install
+    coq_makefile -f _CoqProject -o Makefile
+    make
+    make install
 
 This allows to proces the `Prime.v` example.
 
